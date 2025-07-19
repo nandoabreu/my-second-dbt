@@ -2,7 +2,7 @@ version: 2
 
 sources:
   - name: raw_data
-    database: "{{ env_var('DB_NAME', 'big-star-db') }}"
+    database: "{{ env_var('DB_NAME', 'postgres') }}"
     schema: "{{ env_var('DB_SCHEMA', 'public') }}"
     config:
       freshness:
