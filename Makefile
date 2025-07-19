@@ -30,4 +30,7 @@ source-db-run:
 
 
 dbt-debug:
-	poetry run dbt debug --project-dir "${DBT_PROJECT_DIR}" --profiles-dir "${DBT_PROFILES_DIR}"
+	@poetry run dbt debug --project-dir "${DBT_PROJECT_DIR}" --profiles-dir "${DBT_PROFILES_DIR}"
+
+dbt-source-freshness:
+	@poetry run dbt source freshness --project-dir "${DBT_PROJECT_DIR}" --profiles-dir "${DBT_PROFILES_DIR}"

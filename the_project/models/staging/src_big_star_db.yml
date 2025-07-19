@@ -1,0 +1,19 @@
+version: 2
+
+sources:
+  - name: raw_data
+    database: "{{ env_var('DB_NAME', 'big-star-db') }}"
+    schema: "{{ env_var('DB_SCHEMA', 'public') }}"
+    config:
+      freshness:
+        warn_after:
+          period: hour
+          count: 6
+    loaded_at_field: "created_at"
+    tables:
+      - name: products
+      - name: customers
+      - name: orders
+        loaded_at_field: "order_purchased_at"
+      - name: order_items
+        freshness: null
