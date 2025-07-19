@@ -1,0 +1,21 @@
+1. Pull Docker image:
+	docker pull lilearningproject/big-star-postgres:latest
+
+2. Run a container from the pulled image:
+	docker run --name big-star-container -d -p 5432:5432 lilearningproject/big-star-postgres:latest -c "wal_level=logical"
+
+3. Access the database using SQL:
+	psql -U postgres -d big-star-db
+
+4. Set a replica identity:
+	ALTER TABLE customers REPLICA IDENTITY DEFAULT;
+	ALTER TABLE order_items REPLICA IDENTITY DEFAULT;
+	ALTER TABLE orders REPLICA IDENTITY DEFAULT;
+	ALTER TABLE products REPLICA IDENTITY DEFAULT;
+
+5. Create a replication slot:
+	SELECT pg_create_logical_replication_slot('airbyte_slot', 'pgoutput');
+
+6. Create a publication:
+	CREATE PUBLICATION airbyte_publication FOR TABLE customers, order_items, orders, products;
+

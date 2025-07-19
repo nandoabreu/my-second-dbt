@@ -1,0 +1,18 @@
+GitHub repo: https://github.com/LinkedInLearning/end-to-end-data-engineering-project-4413618
+
+1. Fork the repository:
+	Click the Fork button in the top-right corner of the repository.
+2. Clone the repository:
+	git clone https://github.com/YOUR_USERNAME/end-to-end-data-engineering-project-4413618.git
+	Note: Replace YOUR_USERNAME with your GitHub username.
+3. Navigate to the directory:
+	cd end-to-end-data-engineering-project-4413618
+4. Set up a virtual environment:
+	For Mac:
+		python3 -m venv venv
+		source venv/bin/activate
+	For Windows:
+		python -m venv venv
+		.\venv\Scripts\activate
+5. Install dependencies:
+	pip install -e ".[dev]"

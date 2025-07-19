@@ -1,0 +1,13 @@
+Deploying Airbyte Open Source
+
+1. Clone the GitHub repo:
+	git clone https://github.com/airbytehq/airbyte.git
+
+2. Move to directory:
+	cd airbyte
+
+3. Execute init script:
+	./run-ab-platform.sh
+
+4. Go to the following address in your browser:
+	http://localhost:8000

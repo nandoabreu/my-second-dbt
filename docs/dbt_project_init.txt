@@ -1,0 +1,12 @@
+Initiate the dbt Project
+
+1. Create environment variables:
+	export DBT_BIGQUERY_PROJECT=<your project ID>
+	export DBT_BIGQUERY_LOCATION=<your dataset location>
+	export DBT_BIGQUERY_DATASET=>your dataset name>
+	export DBT_BIGQUERY_KEYFILE_PATH=<your JSON key file path>
+        export DBT_PROFILES_DIR=<your profiles directory path>
+
+2. Verify connection:
+	cd dbt_transformation
+	dbt debug
