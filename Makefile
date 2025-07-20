@@ -17,7 +17,7 @@ status:
 	@echo "DBT Profiles: $(shell echo "\$$DBT_PROFILES_DIR")"  # Test Makefile export
 
 env-setup:
-	@poetry install --with dev,dagster --no-root
+	@poetry install --no-root --with dev,orchestrators
 
 source-db-run:
 	@podman pull docker.io/lilearningproject/big-star-postgres-multi
@@ -44,6 +44,11 @@ dbt-run:
 
 dbt-build:  # dbt test and run
 	@poetry run dbt build --project-dir "${DBT_PROJECT_DIR}" --profiles-dir "${DBT_PROFILES_DIR}"
+
+
+airflow-migrate:
+	@echo "Airflow home: $(shell poetry run echo "\$$AIRFLOW_HOME")"
+	@poetry run airflow db migrate
 
 orchestration:
 	@poetry run dagster dev --working-directory . --module-name orchestration

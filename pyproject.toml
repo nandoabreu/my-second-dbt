@@ -8,18 +8,25 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.9,<=3.13.3"
 dependencies = [
+    "tomli (>=2.2.1); python_version<'3.11'",
+    "python-decouple (>=3.8,<4.0)",
+    #    "jinja2 (>=3.1.6,<4.0.0)",
     "dbt-core (>=1.10.4,<2.0.0)",
-    "dbt-postgres (>=1.9.0,<2.0.0)",
+    #    "dbt-common (>=1.27.0,<2.0.0)",
     "dbt (>=1.0.0.40.5,<2.0.0.0.0)",
+    "psycopg2-binary (>=2.9.10,<3.0.0)",
+    "dbt-postgres (>=1.9.0,<2.0.0)",
 ]
 package-mode = false
 
 [tool.poetry.group.dev.dependencies]
 
-[tool.poetry.group.dagster.dependencies]
-dagster = "^1.11.2"
-dagster-webserver = "^1.11.2"
-dagster-dbt = "^0.27.2"
+[tool.poetry.group.orchestrators.dependencies]
+apache-airflow = "^2.7.2"
+astronomer-providers = "^1.19.4"
+#dagster = "^1.11.2"
+#dagster-webserver = "^1.11.2"
+#dagster-dbt = "^0.27.2"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
