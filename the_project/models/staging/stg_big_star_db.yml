@@ -4,21 +4,25 @@ models:
   - name: stg_customers
     columns:
       - name: customer_id
+        description: Unique customer ID
         tests:
           - not_null
           - unique
   - name: stg_orders
     columns:
       - name: order_id
+        description: Unique order ID
         tests:
           - not_null
           - unique
       - name: customer_id
+        description: FK to stg_customers model
         tests:
           - relationships:
               to: ref("stg_customers")
               field: customer_id
       - name: order_status
+        description: Order status, updated with the order's status
         tests:
           - not_null
           - accepted_values:
