@@ -19,5 +19,7 @@ clean-targets:
 models:
   the_project:
     # Config indicated by + and applies to all files under models/example/
-    example:
+    staging:
       +materialized: view
+    marts:
+      +materialized: table
