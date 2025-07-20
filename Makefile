@@ -16,6 +16,8 @@ status:
 	@echo "DBT project root dir: ${DBT_PROJECT_DIR}"  # Test Makefile export
 	@echo "DBT Profiles: $(shell echo "\$$DBT_PROFILES_DIR")"  # Test Makefile export
 
+env-setup:
+	@poetry install --with dev,dagster --no-root
 
 source-db-run:
 	@podman pull docker.io/lilearningproject/big-star-postgres-multi
