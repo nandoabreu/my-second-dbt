@@ -1,4 +1,4 @@
-.PHONY: status
+.PHONY: status orchestration
 
 ifneq (,$(wildcard .env))
   # Needs to be space-indented
@@ -44,3 +44,6 @@ dbt-run:
 
 dbt-build:  # dbt test and run
 	@poetry run dbt build --project-dir "${DBT_PROJECT_DIR}" --profiles-dir "${DBT_PROFILES_DIR}"
+
+orchestration:
+	@poetry run dagster dev --working-directory . --module-name orchestration
