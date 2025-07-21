@@ -1,7 +1,7 @@
 version: 2
 
 sources:
-  - name: raw_data
+  - name: source
     database: "{{ env_var('DB_NAME', 'postgres') }}"
     schema: "{{ env_var('DB_SCHEMA', 'public') }}"
     config:

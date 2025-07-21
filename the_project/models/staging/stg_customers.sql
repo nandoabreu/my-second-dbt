@@ -3,4 +3,4 @@ SELECT customer_id
      , gender
      , city
      , country
-FROM {{ source("raw_data", "customers") }}
+FROM {{ source("source", "customers") }}
