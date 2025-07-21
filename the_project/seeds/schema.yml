@@ -1,0 +1,16 @@
+version: 2
+
+seeds:
+  - name: ref_countries
+    description: "Reference table containing ISO country codes and names"
+    columns:
+      - name: code
+        description: "ISO 3166-1 alpha-2 country code"
+        tests:
+          - unique
+          - not_null
+      - name: name
+        description: "Country name"
+        tests:
+          - not_null
+          - unique

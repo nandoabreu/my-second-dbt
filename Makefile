@@ -21,8 +21,7 @@ env-setup:
 	@poetry install --no-root --with dev,orchestrators
 
 source-db-run:
-	@podman pull docker.io/lilearningproject/big-star-postgres-multi
-	@podman run -d --rm --name dbt2-source -p 5432:5432 \
+	@podman run -d --rm --name dbt-db -p 5432:5432 \
 		docker.io/lilearningproject/big-star-postgres-multi \
 		-c "wal_level=logical"
 
@@ -36,6 +35,9 @@ dbt-compile:  # Jinja > SQL
 dbt-docs:
 	@poetry run dbt docs generate --project-dir "${DBT_PROJECT_DIR}" --profiles-dir "${DBT_PROFILES_DIR}"
 	@poetry run dbt docs serve --project-dir "${DBT_PROJECT_DIR}" --profiles-dir "${DBT_PROFILES_DIR}"
+
+dbt-load-csvs:  # dbt seed
+	@poetry run dbt seed --project-dir "${DBT_PROJECT_DIR}" --profiles-dir "${DBT_PROFILES_DIR}"
 
 dbt-run:
 	@poetry run dbt run --project-dir "${DBT_PROJECT_DIR}" --profiles-dir "${DBT_PROFILES_DIR}"
