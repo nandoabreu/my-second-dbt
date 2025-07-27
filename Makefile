@@ -49,7 +49,7 @@ dbt-lineage:
 
 dbt-docs:
 	@poetry run dbt docs generate --project-dir "${DBT_PROJECT_DIR}" --profiles-dir "${DBT_PROFILES_DIR}"
-	@poetry run dbt docs serve --project-dir "${DBT_PROJECT_DIR}" --profiles-dir "${DBT_PROFILES_DIR}"
+	@poetry run dbt docs serve --project-dir "${DBT_PROJECT_DIR}" --profiles-dir "${DBT_PROFILES_DIR}" --host 0.0.0.0 --port 8081
 
 dbt-load-csvs:  # dbt seed
 	@poetry run dbt seed --project-dir "${DBT_PROJECT_DIR}" --profiles-dir "${DBT_PROFILES_DIR}"
@@ -80,4 +80,5 @@ airflow-ui:
 	@poetry run airflow webserver
 
 orchestration:
-	@poetry run dagster dev --working-directory . --module-name orchestration
+#	@poetry run dagster dev --working-directory . --module-name orchestration
+	@#poetry run astro dev start  # Astronomer > Airflow
