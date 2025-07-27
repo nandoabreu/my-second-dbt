@@ -1,7 +1,7 @@
 version: 2
 
 sources:
-  - name: source
+  - name: raw
     database: "{{ env_var('DB_NAME', 'postgres') }}"
     schema: "{{ env_var('DB_SCHEMA', 'public') }}"
     config:
@@ -11,9 +11,13 @@ sources:
           count: 6
     loaded_at_field: "created_at"
     tables:
-      - name: products
-      - name: customers
-      - name: orders
+      - name: raw_products
+      - name: raw_customers
+      - name: raw_customers_delayed
+        description: "Simulates late arriving data"
+      - name: raw_orders
         loaded_at_field: "order_purchased_at"
-      - name: order_items
+      - name: raw_order_items
         freshness: null
+      - name: raw_orders_delayed
+        description: "Simulates late arriving data"

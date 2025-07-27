@@ -8,6 +8,11 @@ models:
         tests:
           - not_null
           - unique
+      - name: email
+        description: Email address, unique among all customers
+        tests:
+          - not_null
+          - unique
   - name: stg_orders
     columns:
       - name: order_id
@@ -35,3 +40,25 @@ models:
                 - processing
                 - shipped
                 - unavailable
+
+  - name: stg_order_items
+    columns:
+      - name: order_item_id
+        description: Unique ID for each order item
+        tests:
+          - not_null
+          - unique
+      - name: order_id
+        description: FK to stg_orders model
+        tests:
+          - not_null
+          - relationships:
+              to: ref("stg_orders")
+              field: order_id
+      - name: product_id
+        description: FK to raw_products raw table
+        tests:
+          - not_null
+          - relationships:
+              to: source("raw", "raw_products")
+              field: product_id
