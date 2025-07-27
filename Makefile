@@ -6,6 +6,13 @@ ifneq (,$(wildcard .env))
   export $(shell cut -d= -f1 .env)
 endif
 
+DB_HOST ?= "127.0.0.1"
+DB_PORT ?= 5432
+DB_USER ?= "postgres"
+DB_PASS ?= "mysecretpassword"
+DB_NAME ?= "big-star-db"
+
+
 SHELL := $(shell which zsh || which bash)
 PROJECT_DIR := $(shell realpath .)
 
@@ -24,6 +31,11 @@ source-db-run:
 	@podman run -d --rm --name dbt-db -p 5432:5432 \
 		docker.io/lilearningproject/big-star-postgres-multi \
 		-c "wal_level=logical"
+
+db-refresh:
+	gunzip -c "data/dump-big-star-db.sql" \
+		| PGPASSWORD="${DB_PASS}" psql \
+			-h "${DB_HOST}" -p "${DB_PORT}" -U "${DB_USER}" -v ON_ERROR_STOP=1
 
 
 dbt-debug:  # Validate confs
