@@ -12,16 +12,16 @@ sources:
     loaded_at_field: "created_at"
     tables:
       - name: raw_products
-        description: "Raw/source products table"
+        description: "{{ doc('source_table') }}"
       - name: raw_customers
-        description: "Raw/source customers table"
+        description: "{{ doc('source_table') }}"
       - name: raw_customers_delayed
         description: "Simulates late arriving IDs to be excluded in staging"
       - name: raw_orders
-        description: "Raw/source heap orders' table: no index, PK or FK"
+        description: "{{ doc('source_heap_table') }}"
         loaded_at_field: "order_purchased_at"
       - name: raw_order_items
-        description: "Raw/source heap orders' items table: no index, PK or FK"
+        description: "{{ doc('source_heap_table') }}"
         freshness: null
       - name: raw_orders_delayed
         description: "Simulates late arriving IDs to be excluded in staging"
