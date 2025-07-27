@@ -32,10 +32,9 @@ source-db-run:
 		docker.io/lilearningproject/big-star-postgres-multi \
 		-c "wal_level=logical"
 
-db-refresh:
-	gunzip -c "data/dump-big-star-db.sql" \
-		| PGPASSWORD="${DB_PASS}" psql \
-			-h "${DB_HOST}" -p "${DB_PORT}" -U "${DB_USER}" -v ON_ERROR_STOP=1
+db-reset-and-mess-data:
+	@dump="data/dump-big-star-db.sql"; (gunzip -c "$$dump" || cat "$$dump") \
+		| PGPASSWORD="${DB_PASS}" psql -h "${DB_HOST}" -p "${DB_PORT}" -U "${DB_USER}" -v ON_ERROR_STOP=1
 
 
 dbt-debug:  # Validate confs
