@@ -2,6 +2,7 @@ version: 2
 
 models:
   - name: stg_customers
+    description: "Staged data with excluded rows from the delayed table"
     columns:
       - name: customer_id
         description: Unique customer ID
@@ -14,6 +15,7 @@ models:
           - not_null
           - unique
   - name: stg_orders
+    description: "Staged data, full load, PK added to its ID"
     columns:
       - name: order_id
         description: Unique order ID
@@ -40,8 +42,8 @@ models:
                 - processing
                 - shipped
                 - unavailable
-
   - name: stg_order_items
+    description: "Staged data, full load, PK and FKs added"
     columns:
       - name: order_item_id
         description: Unique ID for each order item

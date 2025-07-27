@@ -2,6 +2,7 @@ version: 2
 
 models:
   - name: dim_customers
+    description: "Dimension table for customer's data, if the customer has orders"
     columns:
       - name: customer_id
         tests:
