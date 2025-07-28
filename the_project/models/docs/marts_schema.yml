@@ -11,7 +11,7 @@ models:
       - name: city
         tests:
           - not_null
-      - name: country
+      - name: country_name
         tests:
           - not_null
       - name: gender
