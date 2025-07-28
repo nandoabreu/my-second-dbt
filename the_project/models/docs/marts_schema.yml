@@ -17,3 +17,17 @@ models:
       - name: gender
         tests:
           - not_null
+          - accepted_values:
+              values:
+                - Agender
+                - Bigender
+                - Female
+                - Genderfluid
+                - Genderqueer
+                - Male
+                - Non-binary
+                - Polygender
+      - name: updated_at
+        description: "Customer's data latest update timestamp as a dbt model"
+        tests:
+          - not_null
