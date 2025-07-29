@@ -33,7 +33,7 @@ source-db-run:
 		-c "wal_level=logical"
 
 db-reset-and-mess-data:
-	@dump="data/dump-big-star-db.sql"; (gunzip -c "$$dump" || cat "$$dump") \
+	@dump="data/dump-big-star-db.sql"; (gunzip -c "$$dump" 2>/dev/null || cat "$$dump") \
 		| PGPASSWORD="${DB_PASS}" psql -h "${DB_HOST}" -p "${DB_PORT}" -U "${DB_USER}" -v ON_ERROR_STOP=1
 
 
