@@ -8,8 +8,8 @@
                 ALTER TABLE {{ this }} ADD CONSTRAINT pk_products PRIMARY KEY (product_id);
             END IF;
         END$$;
-        "
-    ]
+        ",
+    ],
 ) }}
 
 SELECT product_id

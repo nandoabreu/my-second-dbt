@@ -8,8 +8,8 @@
                 ALTER TABLE {{ this }} ADD CONSTRAINT pk_customers PRIMARY KEY (customer_id);
             END IF;
         END$$;
-        "
-    ]
+        ",
+    ],
 ) }}
 
 SELECT customer_id

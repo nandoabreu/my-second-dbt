@@ -9,9 +9,7 @@
             END IF;
         END$$;
         ",
-        "ALTER TABLE {{ this }} ADD CONSTRAINT fk_order_items_order_id FOREIGN KEY (order_id) REFERENCES {{ ref('orders') }}(order_id) NOT VALID",
-        "ALTER TABLE {{ this }} ADD CONSTRAINT fk_order_items_product_id FOREIGN KEY (product_id) REFERENCES {{ source('src', 'products') }}(product_id) NOT VALID"
-    ]
+    ],
 ) }}
 
 SELECT order_item_id
