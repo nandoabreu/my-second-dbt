@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: stg_customers
+  - name: customers
     description: "Staged data with excluded rows from the delayed table"
     columns:
       - name: customer_id
@@ -14,7 +14,7 @@ models:
         tests:
           - not_null
           - unique
-  - name: stg_orders
+  - name: orders
     description: "Staged data, full load, PK added to its ID"
     columns:
       - name: order_id
@@ -23,10 +23,10 @@ models:
           - not_null
           - unique
       - name: customer_id
-        description: FK to stg_customers model
+        description: FK to customers model
         tests:
           - relationships:
-              to: ref("stg_customers")
+              to: ref("customers")
               field: customer_id
       - name: order_status
         description: Order status, updated with the order's status
@@ -42,7 +42,7 @@ models:
                 - processing
                 - shipped
                 - unavailable
-  - name: stg_order_items
+  - name: order_items
     description: "Staged data, full load, PK and FKs added"
     columns:
       - name: order_item_id
@@ -51,16 +51,16 @@ models:
           - not_null
           - unique
       - name: order_id
-        description: FK to stg_orders model
+        description: FK to orders model
         tests:
           - not_null
           - relationships:
-              to: ref("stg_orders")
+              to: ref("orders")
               field: order_id
       - name: product_id
-        description: FK to raw_products raw table
+        description: FK to products source table
         tests:
           - not_null
           - relationships:
-              to: source("raw", "raw_products")
+              to: source("src", "products")
               field: product_id

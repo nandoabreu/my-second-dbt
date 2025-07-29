@@ -1,6 +1,6 @@
 WITH
-    staged_customers AS (SELECT * FROM {{ ref("stg_customers") }})
-  , raw_orders AS (SELECT * FROM {{ ref("stg_orders") }})
+    staged_customers AS (SELECT * FROM {{ ref("customers") }})
+  , raw_orders AS (SELECT * FROM {{ ref("orders") }})
   , customer_orders AS (
     SELECT c.customer_id
          , c.gender

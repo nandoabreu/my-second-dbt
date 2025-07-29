@@ -1,9 +1,9 @@
 version: 2
 
 sources:
-  - name: raw
+  - name: src
     database: "{{ env_var('DB_NAME', 'postgres') }}"
-    schema: "{{ env_var('DB_SCHEMA', 'public') }}"
+    schema: "src"
     config:
       freshness:
         warn_after:
@@ -11,17 +11,19 @@ sources:
           count: 6
     loaded_at_field: "created_at"
     tables:
-      - name: raw_products
+      - name: products
         description: "{{ doc('source_table') }}"
-      - name: raw_customers
+      - name: customers
         description: "{{ doc('source_table') }}"
-      - name: raw_customers_delayed
-        description: "Simulates late arriving IDs to be excluded in staging"
-      - name: raw_orders
+      - name: orders
         description: "{{ doc('source_heap_table') }}"
         loaded_at_field: "order_purchased_at"
-      - name: raw_order_items
+      - name: order_items
         description: "{{ doc('source_heap_table') }}"
         freshness: null
-      - name: raw_orders_delayed
+      - name: products_delayed
+        description: "Simulates late arriving IDs to be excluded in staging"
+      - name: customers_delayed
+        description: "Simulates late arriving IDs to be excluded in staging"
+      - name: orders_delayed
         description: "Simulates late arriving IDs to be excluded in staging"
