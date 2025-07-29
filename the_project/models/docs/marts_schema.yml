@@ -1,6 +1,20 @@
 version: 2
 
 models:
+  - name: dim_products
+    description: "Dimension table for all product's data and activities"
+    columns:
+      - name: product_id
+        description: "Product's PK"
+        tests:
+          - not_null
+          - unique
+      - name: product_name
+        tests:
+          - not_null
+      - name: last_ordered_on
+        description: "Products's latest ordered date"
+
   - name: dim_customers
     description: "Dimension table for customer's data, if the customer has orders"
     columns:
