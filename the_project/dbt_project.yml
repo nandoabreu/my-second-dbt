@@ -15,6 +15,7 @@ clean-targets:
 
 seeds:
   the_project:
+    +schema: stg
     ref_countries:
       +column_types:
         code: char(2)
@@ -23,9 +24,11 @@ seeds:
 models:
   the_project:
     staging:
-      +materialized: view
+      +materialized: table
+      schema: stg
     marts:
       +materialized: table
+      schema: marts
 
 tests:
   +store_failures: true
