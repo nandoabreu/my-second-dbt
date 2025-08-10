@@ -1,6 +1,6 @@
 [project]
 name = "my-second-dbt"
-version = "0.1.0"
+version = "0.2.0"
 description = ""
 authors = [
     {name = "Fernando Abreu",email = "49952773+nandoabreu@users.noreply.github.com"}
@@ -10,16 +10,12 @@ requires-python = ">=3.9,<=3.13.3"
 dependencies = [
     "tomli (>=2.2.1); python_version<'3.11'",
     "python-decouple (>=3.8,<4.0)",
-    #    "jinja2 (>=3.1.6,<4.0.0)",
-    "dbt-core (>=1.10.4,<2.0.0)",
-    #    "dbt-common (>=1.27.0,<2.0.0)",
+    "dbt-core (>=1.7.0,<1.8.0)",
     "dbt (>=1.0.0.40.5,<2.0.0.0.0)",
     "psycopg2-binary (>=2.9.10,<3.0.0)",
-    "dbt-postgres (>=1.9.0,<2.0.0)",
+    "dbt-mysql (>=1.7.0,<2.0.0)",
 ]
 package-mode = false
-
-[tool.poetry.group.dev.dependencies]
 
 [tool.poetry.group.orchestrators.dependencies]
 apache-airflow = "^2.7.2"

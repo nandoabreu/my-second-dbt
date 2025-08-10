@@ -27,14 +27,31 @@ status:
 env-setup:
 	@poetry install --no-root --with dev,orchestrators
 
-source-db-run:
-	@podman run -d --rm --name dbt-db -p 5432:5432 \
-		docker.io/lilearningproject/big-star-postgres-multi \
-		-c "wal_level=logical"
+db-run:
+	podman stop dbt-mysql >/dev/null 2>&1 && sleep 3 || true
+	podman run -d --rm --name dbt-mysql -p 3306:3306 \
+		-e MYSQL_ROOT_PASSWORD=root \
+		-v /home/repos/my-second-dbt/data:/data \
+		docker.io/library/mysql:5.7 \
+		--explicit_defaults_for_timestamp=1 --secure-file-priv= \
+		&& sleep 9
 
-db-reset-and-mess-data:
-	@dump="data/dump-big-star-db.sql"; (gunzip -c "$$dump" 2>/dev/null || cat "$$dump") \
-		| PGPASSWORD="${DB_PASS}" psql -h "${DB_HOST}" -p "${DB_PORT}" -U "${DB_USER}" -v ON_ERROR_STOP=1
+db-reset: db-run
+	podman exec -t dbt-mysql bash -c "MYSQL_PWD=root mysql -e \" \
+		SET GLOBAL sql_mode = 'NO_AUTO_CREATE_USER'; \
+		SET SESSION sql_mode = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER'; \
+		DROP DATABASE IF EXISTS src; CREATE DATABASE src; \
+		DROP DATABASE IF EXISTS stg; CREATE DATABASE stg; \
+		DROP DATABASE IF EXISTS marts; CREATE DATABASE marts; \
+		CREATE USER IF NOT EXISTS '${DB_USER}'@'%' IDENTIFIED BY '${DB_PASS}'; \
+		GRANT ALL PRIVILEGES ON src.* TO '${DB_USER}'@'%'; \
+		GRANT ALL PRIVILEGES ON stg.* TO '${DB_USER}'@'%'; \
+		GRANT ALL PRIVILEGES ON marts.* TO '${DB_USER}'@'%'; \
+		GRANT FILE ON *.* TO '${DB_USER}'@'%'; \
+		FLUSH PRIVILEGES; \
+	\""
+	sql="data/big-star-db.mysql.sql"; (gunzip -c "$$sql" 2>/dev/null || cat "$$sql") \
+		| MYSQL_PWD=root mysql -h 127.0.0.1 -u root src
 
 
 dbt-debug:  # Validate confs
