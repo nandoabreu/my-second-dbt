@@ -1,12 +1,12 @@
 the_project:
   outputs:
-    unified:
-      type: postgres
+    unified: # All envs are unified because settings come from the .env
+      type: mysql
       host: "{{ env_var('DB_HOST', '127.0.0.1') }}"
-      port: "{{ env_var('DB_PORT', '5432') | int }}"
-      user: "{{ env_var('DB_USER', 'postgres') }}"
+      port: "{{ env_var('DB_PORT', '3306') | int }}"
+      user: "{{ env_var('DB_USER', 'dbt') }}"
       password: "{{ env_var('DB_PASS') }}"
-      dbname: "{{ env_var('DB_NAME', 'postgres') }}"
+      dbname: "{{ env_var('DB_NAME', 'src') }}"
       schema: ""
       threads: 1
   target: unified
