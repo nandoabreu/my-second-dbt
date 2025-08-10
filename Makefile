@@ -52,11 +52,9 @@ db-reset:
 		GRANT FILE ON *.* TO '${DB_USER}'@'%'; \
 		FLUSH PRIVILEGES; \
 	\""
-	@podman exec -t -w /data dbt-mysql bash -c "\
-		gunzip *gz; \
-		cat *sql | MYSQL_PWD="${MYSQL_ADM_PASS}" mysql -h 127.0.0.1 -u root src \
-	"
-
+	@podman exec -t -w /data dbt-mysql bash -c "gunzip *gz"
+	@echo "$(shell date +%T) Load data (may take ~55 seconds)"
+	@podman exec -t -w /data dbt-mysql bash -c "cat *sql | MYSQL_PWD="${MYSQL_ADM_PASS}" mysql src"
 
 dbt-debug:  # Validate confs
 	@poetry run dbt debug --project-dir "${DBT_PROJECT_DIR}" --profiles-dir "${DBT_PROFILES_DIR}"
