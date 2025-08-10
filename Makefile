@@ -56,7 +56,7 @@ db-reset:
 	@echo "$(shell date +%T) Load data (may take ~55 seconds)"
 	@podman exec -t -w /data dbt-mysql bash -c "cat *sql | MYSQL_PWD="${MYSQL_ADM_PASS}" mysql src"
 
-dbt-debug:  # Validate confs
+dbt-debug:  # Validate DB conn
 	@poetry run dbt debug --project-dir "${DBT_PROJECT_DIR}" --profiles-dir "${DBT_PROFILES_DIR}"
 
 dbt-compile:  # Jinja > SQL
@@ -71,6 +71,10 @@ dbt-docs:
 
 dbt-load-csvs:  # dbt seed
 	@poetry run dbt seed --project-dir "${DBT_PROJECT_DIR}" --profiles-dir "${DBT_PROFILES_DIR}"
+
+dbt-run-stg.products:  # To be removed after Dev phase
+	@poetry run dbt run --project-dir "${DBT_PROJECT_DIR}" --profiles-dir "${DBT_PROFILES_DIR}" \
+		--select models/staging/products.sql
 
 dbt-run:
 	@poetry run dbt run --project-dir "${DBT_PROJECT_DIR}" --profiles-dir "${DBT_PROFILES_DIR}"
