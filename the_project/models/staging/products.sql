@@ -1,15 +1,9 @@
 {{ config(
-    materialized='table',
-    post_hook=[
-        "
-        DO $$
-        BEGIN
-            IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'pk_products') THEN
-                ALTER TABLE {{ this }} ADD CONSTRAINT pk_products PRIMARY KEY (product_id);
-            END IF;
-        END$$;
-        ",
-    ],
+    materialized="incremental",
+    incremental_strategy="append",
+    unique_key="product_id",
+    post_hook=["{{ create_index(this.schema, this.table, 'product_id') }}"],
+    tags=["stg", "staging", "products"]
 ) }}
 
 SELECT product_id
@@ -19,10 +13,11 @@ SELECT product_id
      , price AS product_price
      , rating AS product_rating
      , availability AS product_availability
-     , CASE WHEN availability IS TRUE THEN NULL ELSE CURRENT_TIMESTAMP END AS discontinued_since
-     , CURRENT_TIMESTAMP AS updated_at
-     , CURRENT_TIMESTAMP AS created_at
+     , CASE WHEN availability = 't' THEN NULL ELSE CURRENT_TIMESTAMP END AS discontinued_since
+     , CURRENT_TIMESTAMP AS loaded_at
 FROM {{ source("src", "products") }} s
+{% if is_incremental() %}
 WHERE NOT EXISTS (
-    SELECT 1 FROM {{ source("src", "products_delayed") }} d WHERE d._id = s.product_id
+    SELECT 1 FROM {{ this }} n WHERE n.product_id = s.product_id
 )
+{% endif %}
