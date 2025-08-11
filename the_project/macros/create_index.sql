@@ -1,6 +1,6 @@
 {% macro create_index(schema, table, column) %}
   {% set index = 'idx_' ~ column %}
-  {% do log('Create index if does not exist: ' ~ index, info=True) %}
+  {% do log('Create index if does not exist: ' ~ index) %}
 
   {% set exists_index %}
     SELECT COUNT(*) FROM information_schema.STATISTICS
