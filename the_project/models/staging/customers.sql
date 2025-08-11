@@ -3,7 +3,7 @@
     incremental_strategy="append",
     unique_key='customer_id',
     post_hook=["{{ create_index(this.schema, this.table, 'customer_id') }}"],
-    tags=["stg", "staging", "products"]
+    tags=["stg", "staging", "customers"]
 ) }}
 
 SELECT customer_id
