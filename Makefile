@@ -74,7 +74,7 @@ dbt-load-csvs:  # dbt seed
 
 dbt-run-stg:  # To be removed after Dev phase
 	@poetry run dbt run --project-dir "${DBT_PROJECT_DIR}" --profiles-dir "${DBT_PROFILES_DIR}" \
-		--select models/staging/products.sql models/staging/customers.sql
+		--select tag:stg tag:products --select tag:stg tag:customers --select tag:stg tag:orders   # --full-refresh
 
 dbt-run:
 	@poetry run dbt run --project-dir "${DBT_PROJECT_DIR}" --profiles-dir "${DBT_PROFILES_DIR}"
