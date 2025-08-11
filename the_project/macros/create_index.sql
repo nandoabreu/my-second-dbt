@@ -13,11 +13,10 @@
   {% if execute %}
     {% set exists = result.columns[0].values()[0]|int %}
     {% if exists != 0 %}
-      {% do log('Index ' ~ index ~ ' already exists', info=True) %}
     {% else %}
       {% set ddl %}ALTER TABLE {{ schema }}.{{ table }} ADD INDEX {{ index }} ({{ column }}){% endset %}
       {% do run_query(ddl) %}
-      {% do log('Index ' ~ index ~ ' created', info=True) %}
+      {% do log('Index created for ' ~ schema ~ '.' ~ table ~ ': ' ~ index, info=True) %}
     {% endif %}
   {% endif %}
 {% endmacro %}
