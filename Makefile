@@ -72,9 +72,9 @@ dbt-docs:
 dbt-load-csvs:  # dbt seed
 	@poetry run dbt seed --project-dir "${DBT_PROJECT_DIR}" --profiles-dir "${DBT_PROFILES_DIR}"
 
-dbt-run-stg:  # To be removed after Dev phase
+dbt-run-only-stg:
 	@poetry run dbt run --project-dir "${DBT_PROJECT_DIR}" --profiles-dir "${DBT_PROFILES_DIR}" \
-		--select tag:stg tag:products --select tag:stg tag:customers --select tag:stg tag:orders   # --full-refresh
+		--select tag:stg  # --full-refresh
 
 dbt-run:
 	@poetry run dbt run --project-dir "${DBT_PROJECT_DIR}" --profiles-dir "${DBT_PROFILES_DIR}"
