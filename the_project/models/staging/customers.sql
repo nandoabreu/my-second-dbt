@@ -1,15 +1,9 @@
 {{ config(
-    materialized='table',
-    post_hook=[
-        "
-        DO $$
-        BEGIN
-            IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'pk_customers') THEN
-                ALTER TABLE {{ this }} ADD CONSTRAINT pk_customers PRIMARY KEY (customer_id);
-            END IF;
-        END$$;
-        ",
-    ],
+    materialized="incremental",
+    incremental_strategy="append",
+    unique_key='customer_id',
+    post_hook=["{{ create_index(this.schema, this.table, 'customer_id') }}"],
+    tags=["stg", "staging", "products"]
 ) }}
 
 SELECT customer_id
@@ -17,7 +11,10 @@ SELECT customer_id
      , gender
      , city
      , country
+     , CURRENT_TIMESTAMP AS loaded_at
 FROM {{ source("src", "customers") }} s
+{% if is_incremental() %}
 WHERE NOT EXISTS (
-    SELECT 1 FROM {{ source("src", "customers_delayed") }} d WHERE d._id = s.customer_id
+    SELECT 1 FROM {{ this }} n WHERE n.customer_id = s.customer_id
 )
+{% endif %}

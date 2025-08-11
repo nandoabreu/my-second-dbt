@@ -72,9 +72,9 @@ dbt-docs:
 dbt-load-csvs:  # dbt seed
 	@poetry run dbt seed --project-dir "${DBT_PROJECT_DIR}" --profiles-dir "${DBT_PROFILES_DIR}"
 
-dbt-run-stg.products:  # To be removed after Dev phase
+dbt-run-stg:  # To be removed after Dev phase
 	@poetry run dbt run --project-dir "${DBT_PROJECT_DIR}" --profiles-dir "${DBT_PROFILES_DIR}" \
-		--select models/staging/products.sql
+		--select models/staging/products.sql models/staging/customers.sql
 
 dbt-run:
 	@poetry run dbt run --project-dir "${DBT_PROJECT_DIR}" --profiles-dir "${DBT_PROFILES_DIR}"
