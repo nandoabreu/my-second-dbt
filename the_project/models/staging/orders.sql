@@ -1,23 +1,23 @@
+{% set unique_column = "order_id" %}
+
 {{ config(
-    materialized='table',
-    post_hook=[
-        "
-        DO $$
-        BEGIN
-            IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'pk_orders') THEN
-                ALTER TABLE {{ this }} ADD CONSTRAINT pk_orders PRIMARY KEY (order_id);
-            END IF;
-        END$$;
-        ",
-    ],
+    materialized="incremental",
+    incremental_strategy="append",
+    unique_key=unique_column,
+    post_hook=["{{ create_index(this.schema, this.table, '" ~ unique_column ~ "') }}"],
+    tags=["staging", "stg", "orders"]
 ) }}
 
-SELECT order_id
-     , customer_id
-     , status AS order_status
-     , order_approved_at
-     , order_delivered_at
+SELECT
+    {{ unique_column }}
+  , customer_id
+  , status AS order_status
+  , order_approved_at
+  , order_delivered_at
+  , CURRENT_TIMESTAMP AS loaded_at
 FROM {{ source("src", "orders") }} s
+{% if is_incremental() %}
 WHERE NOT EXISTS (
-    SELECT 1 FROM {{ source("src", "orders_delayed") }} d WHERE d._id = s.order_id
+    SELECT 1 FROM {{ this }} n WHERE n.{{ unique_column }} = s.{{ unique_column }}
 )
+{% endif %}
