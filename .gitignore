@@ -158,6 +158,7 @@ target/
 dbt_modules/
 dbt_packages/
 logs/
+logs
 
 ### VisualStudio template
 ## Ignore Visual Studio temporary files, build results, and
