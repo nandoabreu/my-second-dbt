@@ -1,3 +1,7 @@
+{{ config(
+    tags=["mart", "customers"]
+) }}
+
 WITH
     staged_customers AS (SELECT * FROM {{ ref("customers") }})
   , raw_orders AS (SELECT * FROM {{ ref("orders") }})

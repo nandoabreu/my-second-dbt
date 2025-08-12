@@ -11,8 +11,10 @@ sources:
     loaded_at_field: "created_at"
     tables:
       - name: products
+        tags: [ "{{ env_var('DB_SCHEMA_SRC', 'src') }}", "source", "raw", "external", "products" ]
         description: "{{ doc('source_table') }}"
       - name: customers
+        tags: [ "{{ env_var('DB_SCHEMA_SRC', 'src') }}", "source", "raw", "external", "customers" ]
         description: "{{ doc('source_table') }}"
       - name: orders
         description: "{{ doc('source_heap_table') }}"

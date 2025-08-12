@@ -1,3 +1,7 @@
+{{ config(
+    tags=["mart", "products"]
+) }}
+
 WITH products_order_dates AS (
     SELECT oi.product_id, MAX(o.order_approved_at) as last_order_at
     FROM {{ ref('order_items') }} oi
