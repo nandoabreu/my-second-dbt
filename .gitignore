@@ -159,6 +159,7 @@ dbt_modules/
 dbt_packages/
 logs/
 logs
+.user.yml
 
 ### VisualStudio template
 ## Ignore Visual Studio temporary files, build results, and
