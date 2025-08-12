@@ -10,18 +10,19 @@ DB_HOST ?= "127.0.0.1"
 DB_PORT ?= 3306
 DB_USER ?= "dbt_user"
 DB_PASS ?= "dbt_pass"
-DB_NAME ?= "src"
+DB_SCHEMA_SRC ?= "src"
 
 
 SHELL := $(shell command -v bash 2>/dev/null || command -v zsh)
 CONTAINER_ENGINE := $(shell command -v podman 2>/dev/null || command -v docker)
 VIRTUAL_ENV ?= $(shell poetry env info -p 2>/dev/null || find . -type d -name '*venv' -exec realpath {} \;)
 PROJECT_DIR := $(shell realpath .)
+DBT_CMD_EXTRA_PARAMS := "--project-dir \"${DBT_PROJECT_DIR}\" --profiles-dir \"${DBT_PROFILES_DIR}\""
 
 
 status:
 	@echo "Makefile shell: ${SHELL}"
-	@echo "Source DB: $(shell echo "\$$DB_NAME @ \$$DB_HOST:\$$DB_PORT")"  # Test .env export
+	@echo "Source DB: $(shell echo "\$$DB_SCHEMA_SRC @ \$$DB_HOST:\$$DB_PORT")"  # Test .env export
 	@echo "Container engine: ${CONTAINER_ENGINE}"
 	@echo "DBT project root dir: ${DBT_PROJECT_DIR}"  # Test Makefile export
 	@echo "DBT Profiles: $(shell echo "\$$DBT_PROFILES_DIR")"  # Test Makefile export
@@ -46,22 +47,22 @@ db-reset:
 	@${CONTAINER_ENGINE} exec -t dbt-mysql bash -c "MYSQL_PWD=${MYSQL_ADM_PASS} mysql -e \" \
 		SET GLOBAL sql_mode = 'NO_AUTO_CREATE_USER'; \
 		SET SESSION sql_mode = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER'; \
-		DROP DATABASE IF EXISTS src; CREATE DATABASE src; \
-		DROP DATABASE IF EXISTS stg; CREATE DATABASE stg; \
-		DROP DATABASE IF EXISTS marts; CREATE DATABASE marts; \
+		DROP DATABASE IF EXISTS src; CREATE DATABASE ${DB_SCHEMA_SRC}; \
+		DROP DATABASE IF EXISTS stg; CREATE DATABASE ${DB_SCHEMA_STG}; \
+		DROP DATABASE IF EXISTS marts; CREATE DATABASE ${DB_SCHEMA_MART}; \
 		CREATE USER IF NOT EXISTS '${DB_USER}'@'%' IDENTIFIED BY '${DB_PASS}'; \
-		GRANT ALL PRIVILEGES ON src.* TO '${DB_USER}'@'%'; \
-		GRANT ALL PRIVILEGES ON stg.* TO '${DB_USER}'@'%'; \
-		GRANT ALL PRIVILEGES ON marts.* TO '${DB_USER}'@'%'; \
+		GRANT ALL PRIVILEGES ON ${DB_SCHEMA_SRC}.* TO '${DB_USER}'@'%'; \
+		GRANT ALL PRIVILEGES ON ${DB_SCHEMA_STG}.* TO '${DB_USER}'@'%'; \
+		GRANT ALL PRIVILEGES ON ${DB_SCHEMA_MART}.* TO '${DB_USER}'@'%'; \
 		GRANT FILE ON *.* TO '${DB_USER}'@'%'; \
 		FLUSH PRIVILEGES; \
 	\""
 	@${CONTAINER_ENGINE} exec -t -w /data dbt-mysql bash -c "gunzip *gz"
 	@echo "$(shell date +%T) Load data (may take ~55 seconds)"
-	@${CONTAINER_ENGINE} exec -t -w /data dbt-mysql bash -c "cat *sql | MYSQL_PWD="${MYSQL_ADM_PASS}" mysql src"
+	@${CONTAINER_ENGINE} exec -t -w /data dbt-mysql bash -c "cat *sql | MYSQL_PWD="${MYSQL_ADM_PASS}" mysql ${DB_SCHEMA_SRC}"
 
 dbt-debug:  # Validate DB conn
-	@poetry run dbt debug --project-dir "${DBT_PROJECT_DIR}" --profiles-dir "${DBT_PROFILES_DIR}"
+	@eval poetry run dbt debug ${DBT_CMD_EXTRA_PARAMS}
 
 dbt-compile:  # Jinja > SQL
 	@poetry run dbt compile --project-dir "${DBT_PROJECT_DIR}" --profiles-dir "${DBT_PROFILES_DIR}"
@@ -74,7 +75,7 @@ dbt-docs:
 	@poetry run dbt docs serve --project-dir "${DBT_PROJECT_DIR}" --profiles-dir "${DBT_PROFILES_DIR}" # --port 8080 --debug
 
 dbt-load-csvs:  # dbt seed
-	@poetry run dbt seed --project-dir "${DBT_PROJECT_DIR}" --profiles-dir "${DBT_PROFILES_DIR}"
+	@eval poetry run dbt seed ${DBT_CMD_EXTRA_PARAMS} --full-refresh
 
 dbt-run-only-stg:
 	@poetry run dbt run --project-dir "${DBT_PROJECT_DIR}" --profiles-dir "${DBT_PROFILES_DIR}" \

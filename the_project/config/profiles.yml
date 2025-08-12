@@ -6,7 +6,5 @@ the_project:
       port: "{{ env_var('DB_PORT', '3306') | int }}"
       user: "{{ env_var('DB_USER', 'dbt') }}"
       password: "{{ env_var('DB_PASS') }}"
-      dbname: "{{ env_var('DB_NAME', 'src') }}"
-      schema: ""
       threads: 1
   target: unified

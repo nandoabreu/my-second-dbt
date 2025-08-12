@@ -15,7 +15,7 @@ clean-targets:
 
 seeds:
   the_project:
-    +schema: stg
+    +schema: "{{ env_var('DB_SCHEMA_STG', 'stg') }}"
     ref_countries:
       +column_types:
         code: char(2)
@@ -24,11 +24,13 @@ seeds:
 models:
   the_project:
     staging:
-      +materialized: table
-      schema: stg
+      +materialized: incremental
+      incremental_strategy: append
+      schema: "{{ env_var('DB_SCHEMA_STG', 'stg') }}"
     marts:
-      +materialized: table
-      schema: marts
+      +materialized: incremental
+      incremental_strategy: append
+      schema: "{{ env_var('DB_SCHEMA_MART', 'mart') }}"
 
 tests:
   +store_failures: true

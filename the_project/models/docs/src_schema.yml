@@ -2,8 +2,7 @@ version: 2
 
 sources:
   - name: src
-    database: "{{ env_var('DB_NAME', 'postgres') }}"
-    schema: "src"
+    schema: "{{ env_var('DB_SCHEMA_SRC', 'src') }}"
     config:
       freshness:
         warn_after:
