@@ -13,33 +13,37 @@ DB_PASS ?= "dbt_pass"
 DB_NAME ?= "src"
 
 
-SHELL := $(shell which zsh || which bash)
+SHELL := $(shell command -v bash 2>/dev/null || command -v zsh)
+CONTAINER_ENGINE := $(shell command -v podman 2>/dev/null || command -v docker)
+VIRTUAL_ENV ?= $(shell poetry env info -p 2>/dev/null || find . -type d -name '*venv' -exec realpath {} \;)
 PROJECT_DIR := $(shell realpath .)
 
 
 status:
 	@echo "Makefile shell: ${SHELL}"
 	@echo "Source DB: $(shell echo "\$$DB_NAME @ \$$DB_HOST:\$$DB_PORT")"  # Test .env export
+	@echo "Container engine: ${CONTAINER_ENGINE}"
 	@echo "DBT project root dir: ${DBT_PROJECT_DIR}"  # Test Makefile export
 	@echo "DBT Profiles: $(shell echo "\$$DBT_PROFILES_DIR")"  # Test Makefile export
+	@echo "Project's virtual env: ${VIRTUAL_ENV}"
 	@echo "Airflow home: $(shell poetry run echo "\$$AIRFLOW_HOME")"
 
 env-setup:
-	@poetry install --no-root --with dev,orchestrators
+	@poetry install --no-root
 
 db-run:
-	@podman stop dbt-mysql >/dev/null 2>&1 && sleep 3 || true
-	@podman run -d --rm --name dbt-mysql -p "${DB_PORT}:3306" \
+	@${CONTAINER_ENGINE} stop dbt-mysql >/dev/null 2>&1 && sleep 3 || true
+	@${CONTAINER_ENGINE} run -d --rm --name dbt-mysql -p "${DB_PORT}:3306" \
 		-e MYSQL_ROOT_PASSWORD="${MYSQL_ADM_PASS}" \
 		docker.io/library/mysql:5.7 \
 		--explicit_defaults_for_timestamp=1 --secure-file-priv= \
 		&& sleep 9
 
 db-reset:
-	@podman exec -t dbt-mysql rm -rf "/data"; \
-		podman exec -t dbt-mysql mkdir "/data"; \
-		podman cp data dbt-mysql:/
-	@podman exec -t dbt-mysql bash -c "MYSQL_PWD=${MYSQL_ADM_PASS} mysql -e \" \
+	@${CONTAINER_ENGINE} exec -t dbt-mysql rm -rf "/data"; \
+		${CONTAINER_ENGINE} exec -t dbt-mysql mkdir "/data"; \
+		${CONTAINER_ENGINE} cp data dbt-mysql:/
+	@${CONTAINER_ENGINE} exec -t dbt-mysql bash -c "MYSQL_PWD=${MYSQL_ADM_PASS} mysql -e \" \
 		SET GLOBAL sql_mode = 'NO_AUTO_CREATE_USER'; \
 		SET SESSION sql_mode = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER'; \
 		DROP DATABASE IF EXISTS src; CREATE DATABASE src; \
@@ -52,9 +56,9 @@ db-reset:
 		GRANT FILE ON *.* TO '${DB_USER}'@'%'; \
 		FLUSH PRIVILEGES; \
 	\""
-	@podman exec -t -w /data dbt-mysql bash -c "gunzip *gz"
+	@${CONTAINER_ENGINE} exec -t -w /data dbt-mysql bash -c "gunzip *gz"
 	@echo "$(shell date +%T) Load data (may take ~55 seconds)"
-	@podman exec -t -w /data dbt-mysql bash -c "cat *sql | MYSQL_PWD="${MYSQL_ADM_PASS}" mysql src"
+	@${CONTAINER_ENGINE} exec -t -w /data dbt-mysql bash -c "cat *sql | MYSQL_PWD="${MYSQL_ADM_PASS}" mysql src"
 
 dbt-debug:  # Validate DB conn
 	@poetry run dbt debug --project-dir "${DBT_PROJECT_DIR}" --profiles-dir "${DBT_PROFILES_DIR}"
