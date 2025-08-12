@@ -11,8 +11,6 @@ dependencies = [
     "tomli (>=2.2.1); python_version<'3.11'",
     "python-decouple (>=3.8,<4.0)",
     "dbt-core (>=1.7.0,<1.8.0)",
-    "dbt (>=1.0.0.40.5,<2.0.0.0.0)",
-    "psycopg2-binary (>=2.9.10,<3.0.0)",
     "dbt-mysql (>=1.7.0,<2.0.0)",
 ]
 package-mode = false
