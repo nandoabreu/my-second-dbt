@@ -22,9 +22,3 @@ sources:
       - name: order_items
         description: "{{ doc('source_heap_table') }}"
         freshness: null
-      - name: products_delayed
-        description: "Simulates late arriving IDs to be excluded in staging"
-      - name: customers_delayed
-        description: "Simulates late arriving IDs to be excluded in staging"
-      - name: orders_delayed
-        description: "Simulates late arriving IDs to be excluded in staging"

@@ -45,25 +45,27 @@ db-run:
 		-e MYSQL_ROOT_PASSWORD="${MYSQL_ADM_PASS}" \
 		docker.io/library/mysql:5.7 \
 		--explicit_defaults_for_timestamp=1 --secure-file-priv= \
-		&& sleep 9
+		&& sleep 9  # Wait for MySQL to start
 
 db-reset:
-	@${CONTAINER_ENGINE} exec -t dbt-mysql rm -rf "/data"; \
-		${CONTAINER_ENGINE} exec -t dbt-mysql mkdir "/data"; \
-		${CONTAINER_ENGINE} cp data dbt-mysql:/
 	@${CONTAINER_ENGINE} exec -t dbt-mysql bash -c "MYSQL_PWD=${MYSQL_ADM_PASS} mysql -e \" \
 		SET GLOBAL sql_mode = 'NO_AUTO_CREATE_USER'; \
 		SET SESSION sql_mode = 'STRICT_TRANS_TABLES,NO_AUTO_CREATE_USER'; \
 		DROP DATABASE IF EXISTS ${DB_SCHEMA_SRC}; CREATE DATABASE ${DB_SCHEMA_SRC}; \
 		DROP DATABASE IF EXISTS ${DB_SCHEMA_STG}; CREATE DATABASE ${DB_SCHEMA_STG}; \
 		DROP DATABASE IF EXISTS ${DB_SCHEMA_MART}; CREATE DATABASE ${DB_SCHEMA_MART}; \
+		DROP DATABASE IF EXISTS delayed_data; CREATE DATABASE delayed_data; \
 		CREATE USER IF NOT EXISTS '${DB_USER}'@'%' IDENTIFIED BY '${DB_PASS}'; \
 		GRANT ALL PRIVILEGES ON ${DB_SCHEMA_SRC}.* TO '${DB_USER}'@'%'; \
 		GRANT ALL PRIVILEGES ON ${DB_SCHEMA_STG}.* TO '${DB_USER}'@'%'; \
 		GRANT ALL PRIVILEGES ON ${DB_SCHEMA_MART}.* TO '${DB_USER}'@'%'; \
+		GRANT ALL PRIVILEGES ON delayed_data.* TO '${DB_USER}'@'%'; \
 		GRANT FILE ON *.* TO '${DB_USER}'@'%'; \
 		FLUSH PRIVILEGES; \
 	\""
+	@${CONTAINER_ENGINE} exec -t dbt-mysql rm -rf "/data"; \
+		${CONTAINER_ENGINE} exec -t dbt-mysql mkdir "/data"; \
+		${CONTAINER_ENGINE} cp data dbt-mysql:/
 	@${CONTAINER_ENGINE} exec -t -w /data dbt-mysql bash -c "gunzip *gz"
 	@echo "$(shell date +%T) Load data (may take ~55 seconds)"
 	@${CONTAINER_ENGINE} exec -t -w /data dbt-mysql bash -c "cat *sql | MYSQL_PWD="${MYSQL_ADM_PASS}" mysql ${DB_SCHEMA_SRC}"
@@ -79,7 +81,7 @@ dbt-lineage:
 
 dbt-docs:
 	@eval poetry run dbt docs generate ${DBT_CMD_EXTRA_PARAMS}
-	@eval poetry run dbt docs serve ${DBT_CMD_EXTRA_PARAMS}  # --port 8080 --debug
+	@eval poetry run dbt docs serve ${DBT_CMD_EXTRA_PARAMS} --port 8080  # --debug
 
 dbt-load-csvs:  # dbt seed
 	@eval poetry run dbt seed ${DBT_CMD_EXTRA_PARAMS} ${REFRESH}
