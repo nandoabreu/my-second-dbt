@@ -27,7 +27,7 @@ models:
       +schema: "{{ env_var('DB_SCHEMA_STG', 'stg') }}"
       +materialized: incremental
       incremental_strategy: append
-    marts:
+    mart:
       +schema: "{{ env_var('DB_SCHEMA_MART', 'mart') }}"
       +materialized: incremental
       incremental_strategy: append
