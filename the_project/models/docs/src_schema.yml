@@ -8,7 +8,6 @@ sources:
         warn_after:
           period: hour
           count: 6
-    loaded_at_field: "created_at"
     tables:
       - name: products
         tags: [ "{{ env_var('DB_SCHEMA_SRC', 'src') }}", "source", "raw", "external", "products" ]
