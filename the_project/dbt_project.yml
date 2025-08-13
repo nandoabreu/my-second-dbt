@@ -24,13 +24,13 @@ seeds:
 models:
   the_project:
     staging:
+      +schema: "{{ env_var('DB_SCHEMA_STG', 'stg') }}"
       +materialized: incremental
       incremental_strategy: append
-      schema: "{{ env_var('DB_SCHEMA_STG', 'stg') }}"
     marts:
+      +schema: "{{ env_var('DB_SCHEMA_MART', 'mart') }}"
       +materialized: incremental
       incremental_strategy: append
-      schema: "{{ env_var('DB_SCHEMA_MART', 'mart') }}"
 
 tests:
   +store_failures: true
