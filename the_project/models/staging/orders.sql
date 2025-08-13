@@ -1,8 +1,6 @@
 {% set unique_column = "order_id" %}
 
 {{ config(
-    materialized="incremental",
-    incremental_strategy="append",
     unique_key=unique_column,
     post_hook=["{{ create_index(this.schema, this.table, '" ~ unique_column ~ "') }}"],
     tags=["staging", "stg", "orders"]

@@ -1,12 +1,12 @@
+{% set unique_column = "product_id" %}
+
 {{ config(
-    materialized="incremental",
-    incremental_strategy="append",
-    unique_key="product_id",
-    post_hook=["{{ create_index(this.schema, this.table, 'product_id') }}"],
+    unique_key=unique_column,
+    post_hook=["{{ create_index(this.schema, this.table, '" ~ unique_column ~ "') }}"],
     tags=["stg", "staging", "products"]
 ) }}
 
-SELECT product_id
+SELECT {{ unique_column }}
      , name AS product_name
      , category AS product_category
      , collection AS campaign_name
@@ -18,6 +18,6 @@ SELECT product_id
 FROM {{ source("src", "products") }} s
 {% if is_incremental() %}
 WHERE NOT EXISTS (
-    SELECT 1 FROM {{ this }} n WHERE n.product_id = s.product_id
+    SELECT 1 FROM {{ this }} n WHERE n.{{ unique_column }} = s.{{ unique_column }}
 )
 {% endif %}

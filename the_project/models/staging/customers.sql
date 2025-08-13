@@ -1,12 +1,12 @@
+{% set unique_column = "customer_id" %}
+
 {{ config(
-    materialized="incremental",
-    incremental_strategy="append",
-    unique_key='customer_id',
-    post_hook=["{{ create_index(this.schema, this.table, 'customer_id') }}"],
+    unique_key=unique_column,
+    post_hook=["{{ create_index(this.schema, this.table, '" ~ unique_column ~ "') }}"],
     tags=["stg", "staging", "customers"]
 ) }}
 
-SELECT customer_id
+SELECT {{ unique_column }}
      , email
      , gender
      , city
@@ -15,6 +15,6 @@ SELECT customer_id
 FROM {{ source("src", "customers") }} s
 {% if is_incremental() %}
 WHERE NOT EXISTS (
-    SELECT 1 FROM {{ this }} n WHERE n.customer_id = s.customer_id
+    SELECT 1 FROM {{ this }} n WHERE n.{{ unique_column }} = s.{{ unique_column }}
 )
 {% endif %}
