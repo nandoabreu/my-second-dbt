@@ -18,7 +18,7 @@ SHELL := $(shell command -v bash 2>/dev/null || command -v zsh)
 CONTAINER_ENGINE := $(shell command -v podman 2>/dev/null || command -v docker)
 VIRTUAL_ENV ?= $(shell poetry env info -p 2>/dev/null || find . -type d -name '*venv' -exec realpath {} \;)
 PROJECT_DIR := $(shell realpath .)
-DBT_CMD_EXTRA_PARAMS := "--project-dir \"${DBT_PROJECT_DIR}\" --profiles-dir \"${DBT_PROFILES_DIR}\""
+DBT_CMD_EXTRA_PARAMS := --project-dir "${DBT_PROJECT_DIR}" --profiles-dir "${DBT_PROFILES_DIR}"
 
 REFRESH :=
 ifeq ($(DBT_MODE),dev)
@@ -71,35 +71,36 @@ db-reset:
 	@${CONTAINER_ENGINE} exec -t -w /data dbt-mysql bash -c "cat *sql | MYSQL_PWD="${MYSQL_ADM_PASS}" mysql ${DB_SCHEMA_SRC}"
 
 dbt-debug:  # Validate DB conn
-	@eval poetry run dbt debug ${DBT_CMD_EXTRA_PARAMS}
+	@poetry run dbt debug ${DBT_CMD_EXTRA_PARAMS}
 
 dbt-compile:  # Jinja > SQL
-	@poetry run dbt compile --project-dir "${DBT_PROJECT_DIR}" --profiles-dir "${DBT_PROFILES_DIR}"
+	@poetry run dbt compile ${DBT_CMD_EXTRA_PARAMS}
 
 dbt-lineage:
-	@eval poetry run dbt ls ${DBT_CMD_EXTRA_PARAMS}
+	@poetry run dbt ls ${DBT_CMD_EXTRA_PARAMS}
 
 dbt-docs:
-	@eval poetry run dbt docs generate ${DBT_CMD_EXTRA_PARAMS}
-	@eval poetry run dbt docs serve ${DBT_CMD_EXTRA_PARAMS} --port 8080  # --debug
+	@poetry run dbt docs generate ${DBT_CMD_EXTRA_PARAMS}
+	@poetry run dbt docs serve ${DBT_CMD_EXTRA_PARAMS} --port 8080  # --debug
 
 dbt-load-csvs:  # dbt seed
-	@eval poetry run dbt seed ${DBT_CMD_EXTRA_PARAMS} ${REFRESH}
+	@poetry run dbt seed ${DBT_CMD_EXTRA_PARAMS} ${REFRESH}
 
 dbt-run-only-stg:
-	@eval poetry run dbt run ${DBT_CMD_EXTRA_PARAMS} --select tag:stg ${REFRESH}
+	@poetry run dbt run ${DBT_CMD_EXTRA_PARAMS} --select tag:stg  # ${REFRESH}
+
 
 dbt-run:
-	@poetry run dbt run --project-dir "${DBT_PROJECT_DIR}" --profiles-dir "${DBT_PROFILES_DIR}"
+	@poetry run dbt run ${DBT_CMD_EXTRA_PARAMS}
 
 dbt-test:  # Test models after build/run
-	@poetry run dbt test --project-dir "${DBT_PROJECT_DIR}" --profiles-dir "${DBT_PROFILES_DIR}"
+	@poetry run dbt test ${DBT_CMD_EXTRA_PARAMS}
 
 dbt-build:  # Full prod pipeline: run (update) > seed > snapshot > test
-	@poetry run dbt build --project-dir "${DBT_PROJECT_DIR}" --profiles-dir "${DBT_PROFILES_DIR}"
+	@poetry run dbt build ${DBT_CMD_EXTRA_PARAMS}
 
 dbt-source-freshness:
-	@poetry run dbt source freshness --project-dir "${DBT_PROJECT_DIR}" --profiles-dir "${DBT_PROFILES_DIR}"
+	@poetry run dbt source freshness ${DBT_CMD_EXTRA_PARAMS}
 
 dbt-clean:
 	@poetry run dbt clean --project-dir "${DBT_PROJECT_DIR}"
