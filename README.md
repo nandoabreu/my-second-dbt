@@ -14,3 +14,40 @@ can be found at: https://github.com/LinkedInLearning/end-to-end-data-engineering
 
 The current implementation follows a classic star schema–based data warehouse architecture.
 We may consider migrating to a Medallion-style approach in future iterations.
+
+
+## Setup
+
+### Prerequisites
+- Python Poetry
+- GNU Make
+- Podman or Docker
+- (Optional) Any SQL client of your choice
+
+### Environment and dependencies
+```bash
+make env-setup
+```
+
+### Database and data
+```bash
+make db-run db-reset 
+```
+
+> Note: The `db-reset` command will drop and recreate the database, so use it with caution.
+
+### Test dbt-DB connection
+```bash
+make dbt-debug
+```
+
+> Note: If you encounter connection issues, ensure that the database container is running 
+> and that your connection settings in `.env` are correct.
+
+
+## Run DBT
+
+### Run models
+```bash
+make dbt-build
+```
